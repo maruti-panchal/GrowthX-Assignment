@@ -3,6 +3,8 @@ const dotenv = require("dotenv");
 const rateLimiter = require("express-rate-limit");
 const connectDB = require("./config/db");
 const helmet = require("helmet");
+const mongoSanitize = require("express-mongo-sanitize");
+const xss = require("xss-clean");
 
 dotenv.config();
 connectDB();
@@ -15,11 +17,12 @@ const limiter = rateLimiter({
 
 const app = express();
 
+
+app.use(mongoSanitize());
+app.use(xss());
 app.use(helmet());
 app.use("/api", limiter);
 app.use(express.json());
-
-// User and Admin Routes
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 
