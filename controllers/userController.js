@@ -1,73 +1,53 @@
 const User = require("../models/User");
 const Assignment = require("../models/Assignment");
 const jwt = require("jsonwebtoken");
+const asyncErrorHandler = require("../utils/asyncErrorHandler");
+const CustomError = require("../utils/CustomErrorClass");
 
 // Register a new user
-exports.registerUser = async (req, res) => {
+exports.registerUser = asyncErrorHandler(async (req, res, next) => {
   const { name, email, password } = req.body;
-  try {
-    const user = new User({ name, email, password });
-    await user.save();
-    res.status(201).json({ message: "User registered successfully" });
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
-  }
-};
+  const user = new User({ name, email, password });
+  await user.save();
+  res.status(201).json({ message: "User registered successfully" });
+});
 
 // User login
-exports.loginUser = async (req, res) => {
+exports.loginUser = asyncErrorHandler(async (req, res, next) => {
   const { email, password } = req.body;
-  try {
-    const user = await User.findOne({ email });
-    if (!user || !(await user.matchPassword(password))) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-    res.json({ token });
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
+  const user = await User.findOne({ email });
+  if (!user || !(await user.matchPassword(password))) {
+    return next(new CustomError("Invalid credentials", 400));
   }
-};
+  const token = jwt.sign(
+    { id: user._id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: "1h" }
+  );
+  res.json({ token });
+});
 
 // Upload an assignment
-exports.uploadAssignment = async (req, res) => {
+exports.uploadAssignment = asyncErrorHandler(async (req, res, next) => {
   const { task, admin } = req.body;
-  try {
-    const adminUser = await User.findOne({ email: admin, role: "admin" });
-    if (!adminUser) {
-      return res.status(400).json({ message: "Admin not found" });
-    }
-    const assignment = new Assignment({
-      userId: req.user.id,
-      task,
-      adminId: adminUser._id,
-    });
-    await assignment.save();
-    res.status(201).json({ message: "Assignment uploaded successfully" });
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
+  const adminUser = await User.findOne({ email: admin, role: "admin" });
+  if (!adminUser) {
+    return next(new CustomError("Admin not found", 400));
   }
-};
+  const assignment = new Assignment({
+    userId: req.user.id,
+    task,
+    adminId: adminUser._id,
+  });
+  await assignment.save();
+  res.status(201).json({ message: "Assignment uploaded successfully" });
+});
 
-// Fetch all available admins with selected fields
-exports.fetchAllAdmins = async (req, res) => {
-  try {
-    // Fetch all users with the role of 'admin', selecting only _id, email, and name
-    const admins = await User.find({ role: "admin" }).select("_id email name");
 
-    // Check if any admins were found
-    if (!admins.length) {
-      return res.status(404).json({ message: "No admins found" });
-    }
-
-    // Respond with the list of admins
-    res.status(200).json(admins);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ message: "Server error", error: err.message });
+exports.fetchAllAdmins = async (req, res, next) => {
+  const admins = await User.find({ role: "admin" }).select("_id email name");
+  if (!admins.length) {
+    return next(new CustomError("No admins found", 404));
   }
+  res.status(200).json(admins);
 };
