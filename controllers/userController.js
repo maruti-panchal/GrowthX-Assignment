@@ -52,3 +52,22 @@ exports.uploadAssignment = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// Fetch all available admins with selected fields
+exports.fetchAllAdmins = async (req, res) => {
+  try {
+    // Fetch all users with the role of 'admin', selecting only _id, email, and name
+    const admins = await User.find({ role: "admin" }).select("_id email name");
+
+    // Check if any admins were found
+    if (!admins.length) {
+      return res.status(404).json({ message: "No admins found" });
+    }
+
+    // Respond with the list of admins
+    res.status(200).json(admins);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
