@@ -1,0 +1,28 @@
+{
+  "name": "gowthx",
+  "version": "1.0.0",
+  "description": "jbjjbnjfnjefc",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maruti-panchal/GrowthX-Assignment.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maruti-panchal/GrowthX-Assignment/issues"
+  },
+  "homepage": "https://github.com/maruti-panchal/GrowthX-Assignment#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.7.0"
+  }
+}
