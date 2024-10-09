@@ -47,17 +47,34 @@ exports.viewAssignments = async (req, res) => {
 
 // Accept or reject an assignment
 exports.updateAssignmentStatus = async (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
+  const { id } = req.params; // Extract assignment ID from URL params
+  const { status } = req.body; // Get the status from request body
+
   try {
+    // Find assignment by ID
     const assignment = await Assignment.findById(id);
     if (!assignment) {
       return res.status(404).json({ message: "Assignment not found" });
     }
+
+    // Validate status field
+    if (!["pending", "accepted", "rejected"].includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
+
+    // Update the status field using the $set operator to avoid overwriting other fields
     assignment.status = status;
+
+    // Save the updated assignment document
     await assignment.save();
-    res.json({ message: `Assignment ${status}` });
+
+    res.status(200).json({
+      message: `Assignment ${status}`,
+      assignment, // Return the updated assignment object in response
+    });
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    // Handle any errors
+    console.error(err.message);
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
