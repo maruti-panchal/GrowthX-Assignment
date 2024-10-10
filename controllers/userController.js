@@ -24,6 +24,12 @@ exports.loginUser = asyncErrorHandler(async (req, res, next) => {
     process.env.JWT_SECRET,
     { expiresIn: "1h" }
   );
+  const cookieOption = {
+    httpOnly: true,
+    secure: true,
+    maxAge: 24 * 60 * 60 * 1000,
+  };
+  res.cookie("user_token", token, cookieOption);
   res.json({ token });
 });
 
@@ -42,7 +48,6 @@ exports.uploadAssignment = asyncErrorHandler(async (req, res, next) => {
   await assignment.save();
   res.status(201).json({ message: "Assignment uploaded successfully" });
 });
-
 
 exports.fetchAllAdmins = async (req, res, next) => {
   const admins = await User.find({ role: "admin" }).select("_id email name");
