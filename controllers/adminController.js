@@ -23,6 +23,12 @@ exports.loginAdmin = asyncErrorHandler(async (req, res, next) => {
     process.env.JWT_SECRET,
     { expiresIn: "1h" }
   );
+  const cookieOption = {
+    httpOnly: true,
+    secure: true,
+    maxAge: 24 * 60 * 60 * 1000,
+  };
+  res.cookie("admin_token", token, cookieOption);
   res.json({ token });
 });
 
