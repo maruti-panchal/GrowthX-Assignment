@@ -1,13 +1,13 @@
 # 🚀 GrowthX Assignment API 🌟
 
-🌐 **Live Demo**: [GrowthX API on Render](your-render-url-here)  
+🌐 **Live Demo**
 📄 **API Documentation**: [Postman Documentation](https://documenter.getpostman.com/view/33332190/2sAXxQeXZZ)
 
 ---
 
 ## 📖 Overview
 
-Welcome to the **GrowthX Assignment API**! This backend API is built using **Node.js** and **Express.js**, with security and performance in mind. From handling user and admin registrations to managing assignments, everything is secured and optimized with the best practices. 💡
+Welcome to the **Assignment Submission API**! This backend API is built using **Node.js** and **Express.js**, with security and performance in mind. From handling user and admin registrations to managing assignments, everything is secured and optimized with the best practices. 💡
 
 ---
 
